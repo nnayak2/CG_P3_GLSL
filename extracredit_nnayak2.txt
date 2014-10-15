@@ -1,0 +1,34 @@
+1. support arbitrarily sized images (and interface windows):
+
+read window.txt file for window parameters.
+p x y
+where p is pixel width and height
+
+
+2. support arbitrary viewing setups:
+
+read view.txt file for camera parameters.
+Format as follows:
+e x y z
+l x y z
+u x y z
+n x
+f x
+where order is eye, look, up, near and far plane.
+
+
+3. support multiple lights at arbitrary locations: (max 8 lights, GL limitation.)
+
+Read lights.txt file for lights. Each light should have following 5 parameters in order given below.
+p x y z
+a r g b
+d r g b
+s r g b
+The values correspond to position, ambient, diffuse, specular.
+
+
+4. up to 15% to support multiple image formats:
+
+You can load multiple images per run, and all image formats supported by SOIL lib can be added.
+BMP works, PNG works, JPG - not working correctly in all jpg images.
+I spoke with Dr Watson, and he said he could give me 10% and not 15% for this 4th point of extra credit.
