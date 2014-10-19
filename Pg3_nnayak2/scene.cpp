@@ -3,6 +3,84 @@
 
 scene* scene::sceneinstance = NULL;
 
+//some local functions for the shader
+char *textFileRead(char *fn) 
+{
+   FILE *fp;
+   char *content = NULL;
+
+   int count = 0;
+
+   if (fn != NULL) {
+      fp = fopen(fn, "rt");
+
+      if (fp != NULL) {
+
+         fseek(fp, 0, SEEK_END);
+         count = ftell(fp);
+         rewind(fp);
+
+         if (count > 0) {
+            content = (char *)malloc(sizeof(char) * (count + 1));
+            count = fread(content, sizeof(char), count, fp);
+            content[count] = '\0';
+         }
+         fclose(fp);
+      }
+   }
+
+   if (content == NULL)
+   {
+      fprintf(stderr, "ERROR: could not load in file %s\n", fn);
+      exit(1);
+   }
+   return content;
+}
+
+GLint getUniLoc(GLuint program, const char *name)
+{
+   GLint loc;
+   loc = glGetUniformLocation(program, name);
+   if (loc == -1)
+      printf("No such uniform named \"%s\"\n", name);
+
+   return loc;
+}
+
+void printShaderLog(GLuint obj)
+{
+   GLint infoLogLength = 0;
+   GLsizei charsWritten = 0;
+   GLchar *infoLog;
+
+   glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+   if (infoLogLength > 0)
+   {
+      infoLog = (char *)malloc(infoLogLength);
+      glGetShaderInfoLog(obj, infoLogLength, &charsWritten, infoLog);
+      printf("%s\n", infoLog);
+      free(infoLog);
+   }
+}
+
+void printProgramLog(GLuint obj)
+{
+   GLint infoLogLength = 0;
+   GLsizei charsWritten = 0;
+   GLchar *infoLog;
+
+   glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+   if (infoLogLength > 0)
+   {
+      infoLog = (char *)malloc(infoLogLength);
+      glGetProgramInfoLog(obj, infoLogLength, &charsWritten, infoLog);
+      printf("%s\n", infoLog);
+      free(infoLog);
+   }
+}
+
 scene* scene::getScene()
 {
 	if (sceneinstance == NULL)
@@ -158,4 +236,45 @@ void scene::setupLights()
       glEnable(light);
       light++;
    }
+}
+
+void scene::setupShaders()
+{
+   GLuint v, f, p;
+   char *vs = NULL, *fs = NULL;
+
+   v = glCreateShader(GL_VERTEX_SHADER);
+   f = glCreateShader(GL_FRAGMENT_SHADER);
+
+   vs = textFileRead("shader.vert");
+   fs = textFileRead("shader.frag");
+
+   const char * ff = fs;
+   const char * vv = vs;
+
+   glShaderSource(v, 1, &vv, NULL);
+   glShaderSource(f, 1, &ff, NULL);
+
+   free(vs); free(fs);
+
+   glCompileShader(v);
+   glCompileShader(f);
+
+   printShaderLog(v);
+   printShaderLog(f);
+
+   p = glCreateProgram();
+   glAttachShader(p, f);
+   glAttachShader(p, v);
+
+   glLinkProgram(p);
+   printProgramLog(p);
+   glUseProgram(p);
+   /*
+   glUniform3f(getUniLoc(p, "LightPosition"), 0.5, 0.5, 0.5);
+   glUniform3f(getUniLoc(p, "LightAmbient"), 0.5, 0.5, 0.5);
+   glUniform3f(getUniLoc(p, "LightDiffuse"), 0.5, 0.5, 0.5);
+   glUniform3f(getUniLoc(p, "LightSpeclar"), 0.5, 0.5, 0.5);
+   glUniform1f(getUniLoc(p, "SpecularFactor"), 0.5);
+   */
 }

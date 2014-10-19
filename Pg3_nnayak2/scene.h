@@ -10,6 +10,7 @@
 #include "tiny_obj_loader.h"
 #include <map>
 #include "soil/SOIL.h"
+#include <GL\glew.h>
 #include <GL/glut.h>
 
 extern int light;
@@ -44,6 +45,7 @@ public:
 	void draw();
    void loadTextures();
    void setupLights();
+   void setupShaders();
 };
 
 #endif

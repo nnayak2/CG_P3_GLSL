@@ -101,9 +101,15 @@ void initialiseGLUT(int argc, char **argv)
 	//glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+   if (glewInit() != GLEW_OK)
+   {
+      printf("problem\n");
+   }
+
    scene *scn = scene::getScene();
    scn->loadTextures();
    scn->setupLights();
+   scn->setupShaders();
 
    glutCreateMenu(handle_menu);	// Setup GLUT popup menu
    int i = 0;
