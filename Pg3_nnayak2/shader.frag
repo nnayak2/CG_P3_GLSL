@@ -1,11 +1,13 @@
-varying vec4 diffuse,ambientGlobal, ambient, ecPos;
+varying vec4 diffuse, ambient, specular, ecPos;
 varying vec3 normal,halfVector;
  
+uniform sampler2D myTex;
+
 void main()
 {
     vec3 n,halfV,viewV,lightDir;
     float NdotL,NdotHV;
-    vec4 color = ambientGlobal;
+    vec4 color;// = ambientGlobal;
     float att, dist;
      
     /* a fragment shader can't write a verying variable, hence we need
@@ -34,6 +36,8 @@ void main()
         NdotHV = max(dot(n,halfV),0.0);
         color += gl_FrontMaterial.specular * gl_LightSource[0].specular * pow(NdotHV,gl_FrontMaterial.shininess);
     }
+
+	vec4 texColor = texture2D( myTex, gl_TexCoord[0].st);
  
-    gl_FragColor = color;
+    gl_FragColor = color + texColor;
 }
