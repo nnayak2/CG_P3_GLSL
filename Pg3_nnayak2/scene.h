@@ -17,6 +17,7 @@ extern int light;
 extern int xx, yy, zz, rot;
 extern float scale;
 extern int activeTex;
+extern int toonToggle;
 
 struct lightSources
 {

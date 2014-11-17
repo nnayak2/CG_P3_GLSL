@@ -2,6 +2,8 @@
 #include <math.h>
 
 scene* scene::sceneinstance = NULL;
+GLuint v, f, p;
+char *vs = NULL, *fs = NULL;
 
 //some local functions for the shader
 char *textFileRead(char *fn) 
@@ -106,6 +108,25 @@ void scene::draw()
    //Toggle the lights
 	if (light) glEnable(GL_LIGHTING);
 	else glDisable(GL_LIGHTING);
+
+   //toggle toon shading
+   if (toonToggle)
+   {
+      GLint loc = glGetUniformLocation(p, "ts");
+      if (loc != -1)
+      {
+         glUniform1f(loc, 1);
+      }
+   }
+   else
+   {
+      GLint loc = glGetUniformLocation(p, "ts");
+      if (loc != -1)
+      {
+         glUniform1f(loc, 0);
+      }
+   }
+
 
 	//Don't apply the transformations to light source
 	glPushMatrix();
@@ -240,9 +261,6 @@ void scene::setupLights()
 
 void scene::setupShaders()
 {
-   GLuint v, f, p;
-   char *vs = NULL, *fs = NULL;
-
    v = glCreateShader(GL_VERTEX_SHADER);
    f = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -270,6 +288,7 @@ void scene::setupShaders()
    glLinkProgram(p);
    printProgramLog(p);
    glUseProgram(p);
+
    /*
    glUniform3f(getUniLoc(p, "LightPosition"), 0.5, 0.5, 0.5);
    glUniform3f(getUniLoc(p, "LightAmbient"), 0.5, 0.5, 0.5);
@@ -277,4 +296,5 @@ void scene::setupShaders()
    glUniform3f(getUniLoc(p, "LightSpeclar"), 0.5, 0.5, 0.5);
    glUniform1f(getUniLoc(p, "SpecularFactor"), 0.5);
    */
+   
 }

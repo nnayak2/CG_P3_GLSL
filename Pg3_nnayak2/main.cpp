@@ -9,38 +9,39 @@ int activeTex = 0;
 glm::vec3 eye, look, up;
 float znear, zfar;
 int pixwidth, pixheight;
+int toonToggle;
 
 std::vector<lightSources> lights;
 
 void Keyboard(unsigned char key, int x, int y)
 {
-	switch (key)
-	{
-	case 'l':
-		if (light) light = 0;
-		else light = 1;
-		break;
+   switch (key)
+   {
+   case 'l':
+      if (light) light = 0;
+      else light = 1;
+      break;
 
-	case 'z':
-		scale += 0.1f;
-		break;
-	case 'x':
-		scale -= 0.1f;
-		break;
+   case 'z':
+      scale += 0.1f;
+      break;
+   case 'x':
+      scale -= 0.1f;
+      break;
 
-	case '[':
-		zz++;
-		break;
-	case ']':
-		zz--;
-		break;
+   case '[':
+      zz++;
+      break;
+   case ']':
+      zz--;
+      break;
 
-	case 'q':
-		rot++;
-		break;
-	case 'w':
-		rot--;
-		break;
+   case 'q':
+      rot++;
+      break;
+   case 'w':
+      rot--;
+      break;
 
    case ',':
       (activeTex - 1 < 0) ? 0 : activeTex--;
@@ -48,37 +49,41 @@ void Keyboard(unsigned char key, int x, int y)
    case '.':
       (activeTex + 1 >= scene::getScene()->texNum) ? scene::getScene()->texNum - 1 : activeTex++;
       break;
-	}
+   case 't':
+      if (toonToggle) toonToggle = 0;
+      else toonToggle = 1;
+      break;
+   }
 }
 
 void SpecialInput(int key, int x, int y)
 {
-	switch (key)
-	{
-	case GLUT_KEY_UP:
-		yy++;
-		break;
-	case GLUT_KEY_DOWN:
-		yy--;
-		break;
-	case GLUT_KEY_LEFT:
-		xx--;
-		break;
-	case GLUT_KEY_RIGHT:
-		xx++;
-		break;
-	}
+   switch (key)
+   {
+   case GLUT_KEY_UP:
+      yy++;
+      break;
+   case GLUT_KEY_DOWN:
+      yy--;
+      break;
+   case GLUT_KEY_LEFT:
+      xx--;
+      break;
+   case GLUT_KEY_RIGHT:
+      xx++;
+      break;
+   }
 }
 
 void draw()
 {
-	scene::getScene()->draw();
-	glutSwapBuffers();
+   scene::getScene()->draw();
+   glutSwapBuffers();
 }
 
 void redraw()
 {
-	glutPostRedisplay();
+   glutPostRedisplay();
 }
 
 void handle_menu(int ID)
@@ -89,17 +94,17 @@ void handle_menu(int ID)
 
 void initialiseGLUT(int argc, char **argv)
 {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowSize(pixwidth, pixheight);
-	glutCreateWindow("\t CSC561: Rasterization");
+   glutInit(&argc, argv);
+   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+   glutInitWindowSize(pixwidth, pixheight);
+   glutCreateWindow("\t CSC561: Rasterization");
 
-	glShadeModel(GL_SMOOTH);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
-	glClearDepth(1.0f);
-	glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LEQUAL);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+   glShadeModel(GL_SMOOTH);
+   glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+   glClearDepth(1.0f);
+   glEnable(GL_DEPTH_TEST);
+   glDepthFunc(GL_LEQUAL);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
    if (glewInit() != GLEW_OK)
    {
@@ -132,11 +137,11 @@ void initialiseGLUT(int argc, char **argv)
    //Some initial translation so cube is visible
    glTranslatef(0, 0, 5);
 
-	glutKeyboardFunc(Keyboard);
-	glutSpecialFunc(SpecialInput);
-	glutDisplayFunc(draw);
-	glutIdleFunc(redraw);
-	glutMainLoop();
+   glutKeyboardFunc(Keyboard);
+   glutSpecialFunc(SpecialInput);
+   glutDisplayFunc(draw);
+   glutIdleFunc(redraw);
+   glutMainLoop();
 }
 
 int main(int argc, char* argv[])
@@ -260,9 +265,9 @@ int main(int argc, char* argv[])
       }
    }
 
-	//This class loads the obj file, and does the intersection calculations
-	scene *scn = scene::getScene();
-   
+   //This class loads the obj file, and does the intersection calculations
+   scene *scn = scene::getScene();
+
    //Get the obj file from user
    //std::string basepath = "./inputs/";
    std::string obj;
@@ -271,9 +276,10 @@ int main(int argc, char* argv[])
    if (obj == "0")
       obj = "cube-textures.obj";
    //obj = basepath + obj;
-   
-	//load the obj file
+
+   //load the obj file
    scn->loadScene(const_cast<char*>(obj.c_str()));
 
-	initialiseGLUT(argc, argv);
+   initialiseGLUT(argc, argv);
 }
+
