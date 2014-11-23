@@ -1,6 +1,6 @@
 uniform float ts;
 
-varying vec4 diffuse, ambient, specular, ecPos;
+varying vec4 diffuse, ambient, specular, ambientGlobal, ecPos;
 varying vec3 normal, halfVector;
 
 uniform sampler2D myTex;
@@ -11,6 +11,7 @@ void main()
    float NdotL, NdotHV;
    vec4 color = ambientGlobal;
    float att, dist;
+   float toonToggle = ts;
 
    /* a fragment shader can't write a verying variable, hence we need
    a new variable to store the normalized interpolated normal */
@@ -19,7 +20,8 @@ void main()
    // Compute the ligt direction
    lightDir = vec3(gl_LightSource[0].position - ecPos);
 
-   if (ts)
+   
+   if (toonToggle == 0.0)
    {
       float intensity;
       vec4 color;
@@ -46,13 +48,6 @@ void main()
       NdotL = max(dot(n, normalize(lightDir)), 0.0);
 
       if (NdotL > 0.0) {
-
-         att = 1.0 / (gl_LightSource[0].constantAttenuation +
-            gl_LightSource[0].linearAttenuation * dist +
-            gl_LightSource[0].quadraticAttenuation * dist * dist);
-         color += (diffuse * NdotL) + ambient;
-
-
          halfV = normalize(halfVector);
          NdotHV = max(dot(n, halfV), 0.0);
          color += gl_FrontMaterial.specular * gl_LightSource[0].specular * pow(NdotHV, gl_FrontMaterial.shininess);
